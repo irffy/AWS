@@ -1,0 +1,18 @@
+#!/bin/bash
+# Add MySQL repository for Amazon Linux 2023 (based on RHEL 9)
+cat <<EOF > /etc/yum.repos.d/mysql.repo
+[mysql80-community]
+name=MySQL 8.0 Community Server
+baseurl=https://repo.mysql.com/yum/mysql-8.0-community/el/9/x86_64/
+enabled=1
+gpgcheck=0
+EOF
+
+# Clean the yum cache
+yum clean all
+
+# Install MySQL client without GPG check
+yum install mysql-community-client --nogpgcheck -y
+
+# Verify installation
+mysql --version
