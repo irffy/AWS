@@ -53,3 +53,40 @@ Find the security group attached to your ALB, and edit its inbound rules to allo
 5. Test the HTTPS Endpoint
 Copy the DNS name of your ALB.
 Open a browser and try accessing https://<ALB-DNS-Name>. Since this is a self-signed certificate, the browser will likely warn that the connection is not trusted. You can proceed by adding an exception.
+
+## Steps to redirect http requests to https on ALB:
+
+To redirect HTTP requests to HTTPS on your ALB, you can configure a rule in the ALB that forwards all HTTP traffic (port 80) to HTTPS (port 443). Here's how to do it:
+
+Steps to Redirect HTTP Requests to HTTPS on ALB
+1. Open EC2 Console and Go to Load Balancers
+Go to the EC2 Dashboard in AWS Management Console.
+Under Load Balancing, select Load Balancers.
+Choose your ALB from the list.
+2. Modify HTTP Listener
+In the Listeners tab of your ALB, find the HTTP (Port 80) listener.
+Click on the View/edit rules link.
+3. Create a Redirect Rule
+In the Rules Editor, there should already be a default rule forwarding traffic to your target group.
+Click the + button (Add rule) above the existing rule.
+Here's how to create the redirect rule:
+
+Condition: Leave it as default, meaning it will apply to all incoming HTTP requests.
+
+Action: Click + Add action.
+
+Choose Redirect to.
+Configure the redirection settings:
+Protocol: HTTPS
+Port: 443
+Host, Path, Query: You can leave these as #{host}, #{path}, and #{query} to ensure the request parameters remain the same.
+Status code: HTTP 301 – Permanent Redirect
+After configuring the rule, click Save.
+
+4. Save and Activate the Rule
+After saving, make sure the redirect rule is listed before the rule that forwards traffic to the target group.
+The rule should now redirect all HTTP requests to HTTPS.
+5. Test the Redirection
+Open your browser and try accessing http://<ALB-DNS-Name>.
+It should automatically redirect to https://<ALB-DNS-Name>.
+This configuration ensures that any HTTP traffic (port 80) is automatically redirected to HTTPS (port 443), providing a secure connection for all requests.
