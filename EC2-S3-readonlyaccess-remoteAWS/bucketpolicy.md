@@ -42,3 +42,16 @@ Adding a bucket policy like the following in Account B allows cross-account acce
     "arn:aws:s3:::bucket-in-account-b/*"
   ]
 }
+
+
+## Summary
+## Access Control Table
+
+The following table summarizes the access control behavior for S3 buckets under different conditions:
+
+| **Condition**                     | **Access**                              |
+|------------------------------------|-----------------------------------------|
+| No bucket policy (default)         | ❌ Denied for other accounts             |
+| Same-account access with IAM role  | ✅ If IAM policy allows it              |
+| Cross-account access               | ❌ Unless bucket policy explicitly allows it |
+| Bucket policy + cross-account IAM role | ✅ Access works                     |
