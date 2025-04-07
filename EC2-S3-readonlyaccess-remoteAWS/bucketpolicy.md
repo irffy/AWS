@@ -17,6 +17,19 @@ This document provides an overview of how access control works for Amazon S3 buc
 - **Same-Account Access**: IAM roles/users in the same account can access the bucket if their IAM policies allow it.
 - **Cross-Account Access**: Denied by default, even if the IAM policy allows it. A bucket policy is required to explicitly trust cross-account roles.
 
+
+## Summary
+## Access Control Table
+
+The following table summarizes the access control behavior for S3 buckets under different conditions:
+
+| **Condition**                     | **Access**                              |
+|------------------------------------|-----------------------------------------|
+| No bucket policy (default)         | ❌ Denied for other accounts             |
+| Same-account access with IAM role  | ✅ If IAM policy allows it              |
+| Cross-account access               | ❌ Unless bucket policy explicitly allows it |
+| Bucket policy + cross-account IAM role | ✅ Access works                     |
+
 ## Examples
 
 ### Without a Bucket Policy (Cross-Account)
@@ -43,15 +56,3 @@ Adding a bucket policy like the following in Account B allows cross-account acce
   ]
 }
 
-
-## Summary
-## Access Control Table
-
-The following table summarizes the access control behavior for S3 buckets under different conditions:
-
-| **Condition**                     | **Access**                              |
-|------------------------------------|-----------------------------------------|
-| No bucket policy (default)         | ❌ Denied for other accounts             |
-| Same-account access with IAM role  | ✅ If IAM policy allows it              |
-| Cross-account access               | ❌ Unless bucket policy explicitly allows it |
-| Bucket policy + cross-account IAM role | ✅ Access works                     |
