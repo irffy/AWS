@@ -17,7 +17,7 @@
    }
    ```
 4. Name the role: `EC2S3ReadOnlyAccessRole`
-5. Create the role
+5. Create the role This gives read-only access to ALL S3 buckets in Account A (and potentially others, if they allow it via bucket policy)
 
 ### Step 2: Attach IAM Role to EC2 Instance
 1. Go to **EC2 > Instances**
