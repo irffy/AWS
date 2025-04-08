@@ -1,5 +1,14 @@
 # AWS Auto Scaling Apache Web Server Setup
 
+## 🚀 What Is an Auto Scaling Group (ASG)?
+An Auto Scaling Group automatically adjusts the number of EC2 instances based on demand. It helps:
+- **Scale Out**: Launch new instances when CPU exceeds 70%.
+- **Scale In**: Terminate instances when CPU drops below 30%.
+- Maintain a minimum/maximum instance count.
+- Use scaling policies (CPU, memory, or custom metrics).
+
+---
+
 ## 🎯 Goal
 Deploy a basic web server (Apache) that automatically scales out when CPU > 70% and scales in when CPU < 30%.
 
