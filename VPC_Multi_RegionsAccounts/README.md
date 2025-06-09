@@ -243,24 +243,84 @@ Below are **easy to follow, AWS Console–based steps** for each primary scenari
 
 ### 2. EC2s in Different VPCs (Same Region, Same Account)
 
-Use **VPC Peering**.
+Use **VPC Peering** to connect instances in two VPCs in the same region.
 
-1. **Navigate to VPC Console → Peering Connections → Create Peering Connection**
+#### Step-by-Step Implementation
 
-   * **Requester:** VPC-A (10.0.0.0/16)
-   * **Accepter:** VPC-B (10.1.0.0/16)
-   * **Region:** Select same region
-2. **Accept the Peering Request** in VPC-B
-3. **Update Route Tables:**
+1. **Open the VPC Console**
 
-   * In VPC-A’s route table: add route `Destination = 10.1.0.0/16`, Target = peering-connection ID
-   * In VPC-B’s route table: add route `Destination = 10.0.0.0/16`, Target = peering-connection ID
-4. **Modify Security Groups:**
+   * Sign in to the AWS Management Console.
+   * In the Services menu, search for **VPC** and click **VPC**.
 
-   * In EC2 SGs, add inbound rule `Type=SSH, Source=10.1.0.0/16` (and vice versa for return)
-5. **Connect** via private IP: `ssh ec2-user@10.1.x.x` from EC2 in VPC-A.
+2. **Create a VPC Peering Connection**
 
-> **Note:** Traffic stays within AWS global backbone; minimal latency.
+   1. In the left-hand navigation pane, click **Peering Connections**.
+   2. Click **Create peering connection**.
+   3. For **Peering connection name tag**, enter `VPC-A-to-VPC-B`.
+   4. Under **Requester VPC**, click the dropdown and select **VPC-A** (e.g., CIDR `10.0.0.0/16`).
+   5. Under **Accepter VPC**, choose **Another VPC in this account** and select **VPC-B** (e.g., CIDR `10.1.0.0/16`).
+   6. Leave **Region** as the current region (e.g., `ap-south-1`).
+   7. Click **Create peering connection**.
+
+3. **Accept the Peering Connection**
+
+   1. Still in **Peering Connections**, find the new entry with status **Pending Acceptance**.
+   2. Select the checkbox next to it, then click **Actions** → **Accept request**.
+   3. Confirm by clicking **Accept**.
+
+4. **Configure Route Tables for VPC-A**
+
+   1. In the left pane, click **Route Tables**.
+   2. Identify the route table associated with the subnet where EC2-A resides:
+
+      * The **Name** column or **Subnet Associations** tab indicates which subnets are linked.
+      * If you used the **Main route table**, it’ll show as **Main** under **Main** column.
+   3. Select the correct route table and click on the **Routes** tab below.
+   4. Click **Edit routes**, then **Add route**.
+   5. In **Destination**, type `10.1.0.0/16` (the CIDR block of VPC-B).
+   6. In **Target**, select **Peering connection** and choose the ID (e.g., `pcx-0abcd1234efgh5678`).
+   7. Click **Save routes**.
+
+5. **Configure Route Tables for VPC-B**
+
+   1. Switch the **Region selector** (if needed) or stay in the same region, and click **Route Tables** again.
+   2. Locate the table used by EC2-B’s subnet.
+   3. Repeat the **Edit routes** process:
+
+      * **Destination**: `10.0.0.0/16` (CIDR of VPC-A)
+      * **Target**: the same peering connection ID
+   4. Click **Save routes**.
+
+6. **Verify Subnet Associations**
+
+   * For each route table, select it and open the **Subnet Associations** tab.
+   * Confirm that the subnets containing EC2-A and EC2-B are checked. If not, click **Edit subnet associations**, select the appropriate subnets, and save.
+
+7. **Update Security Groups**
+
+   1. Go to **EC2** → **Security Groups** in the left menu.
+   2. Select the security group attached to EC2-A.
+   3. Under the **Inbound rules** tab, click **Edit inbound rules** → **Add rule**.
+
+      * **Type**: SSH
+      * **Protocol**: TCP
+      * **Port range**: 22
+      * **Source**: Custom, enter `10.1.0.0/16` (VPC-B CIDR)
+   4. Save rules. Repeat for EC2-B’s security group, allowing `10.0.0.0/16`.
+
+8. **Test the Connection**
+
+   * From EC2-A’s terminal, run:
+
+     ```bash
+     ssh -i /path/to/key.pem ec2-user@<EC2-B private IP>
+     ```
+   * If it hangs or fails, check each previous step:
+
+     * Peering status is **Active**
+     * Routes exist and are correct
+     * Subnets correctly associated
+     * Security group rules allow SSH
 
 ---
 
