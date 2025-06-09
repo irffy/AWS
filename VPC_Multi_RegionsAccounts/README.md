@@ -1,5 +1,9 @@
 # Connecting EC2 Instances Across VPCs, Regions, and AWS Accounts
 
+![Flow Diagram of VPC and EC2 Connectivity](flow-diagram)
+
+In AWS, networking plays a critical role in enabling secure, scalable, and cost-effective communication between your resources. This guide blends conceptual explanations with **step-by-step, console-based walkthroughs** placed directly in each section to ensure clarity from first glance.
+
 In AWS, networking plays a critical role in enabling secure, scalable, and cost-effective communication between your resources. This guide blends conceptual explanations with **step-by-step, console-based walkthroughs** placed directly in each section to ensure clarity from first glance.
 
 ---
@@ -125,25 +129,54 @@ ssh -i key.pem ec2-user@<EC2‑B‑private‑IP>
 
 ## 5. EC2s in Different VPCs (Cross-Region, Different Accounts)
 
-**Concept:** Use Transit Gateway cross-region attachments or Site-to-Site VPN.
+**Concept:** You can use **VPC Peering** even across **regions** and **AWS accounts**, but there are important considerations and limitations.
 
-### A. Transit Gateway Cross-Region
+### A. Cross-Account, Cross-Region VPC Peering
 
-1. **Account A → TGW in Region-1 → Share** via RAM with Account B.
-2. **Account B → Attach its Region-2 VPC** as cross-region attachment.
-3. **Route Tables**: Route peer CIDRs via TGW.
-4. **SGs**: Allow peer CIDRs.
+1. **Initiate Peering from Account A:**
 
-### B. Site-to-Site VPN
+   * Go to **VPC Console** → **Peering Connections** → **Create Peering Connection**.
+   * Name: `A-to-B-crossregion-peering`
+   * **Requester VPC:** Choose VPC in Account A (e.g., `172.31.0.0/16`, `ap-south-1`).
+   * **Accepter VPC:** Enter **Account ID** and **VPC ID** of Account B (e.g., `10.0.0.0/24`, `ap-northeast-1`).
+   * Enable **cross-region** checkbox.
 
-1. **Account A → Virtual Private Gateway** → Attach to VPC.
-2. **Account B → Customer Gateway** for VPC.
-3. **Create VPN Connection** between them.
-4. **Route Tables & SGs**: Add VPN routes, open ports.
+2. **Account B Accepts the Peering Request:**
 
-> **VPN** offers encryption overhead with maintenance tradeoff.
+   * Switch to Account B.
+   * Navigate to **VPC → Peering Connections** → **Accept** the pending request.
 
----
+3. **Update Route Tables** in Both VPCs:
+
+   * In each VPC’s route table, add a route:
+
+     * Destination: peer VPC CIDR
+     * Target: the peering connection ID
+
+4. **Update Security Groups:**
+
+   * Add inbound rules allowing traffic from the other VPC’s CIDR.
+
+### B. When to Use Transit Gateway or VPN
+
+While VPC peering works in this scenario, it may not scale well due to these limitations:
+
+* No transitive routing
+* Manual route/security management
+
+So, if you're planning to connect **many VPCs across regions/accounts**, consider:
+
+#### Option 1: **Transit Gateway (TGW) Cross-Region Attachments**
+
+* Central hub to interconnect VPCs and accounts.
+* Easier to scale and manage.
+
+#### Option 2: **Site-to-Site VPN**
+
+* Encrypted connection.
+* Best suited when VPC peering isn’t possible or for hybrid setups.
+
+> **Tip:** Always avoid overlapping CIDRs to ensure successful peering.
 
 ## 6. EC2s via Public IP (Any Mix)
 
@@ -171,3 +204,5 @@ ssh -i key.pem ec2-user@<EC2‑B‑private‑IP>
 | EC2s via Public IP                                | Any / Any                | Public Internet                          | Very Low         | Higher (egress) |
 
 ---
+
+With these **in-section, detailed steps**, newcomers can immediately find both the rationale and precise console actions needed for each scenario. Let me know if any section needs further expansion or visual aids!
