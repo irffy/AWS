@@ -1,6 +1,6 @@
 # Connecting EC2 Instances Across VPCs, Regions, and AWS Accounts
 
-In AWS, networking plays a critical role in enabling secure, scalable, and cost-effective communication between your resources. This guide blends conceptual explanations with **step-by-step, console-based walkthroughs** placed directly in each section to ensure clarity from first glance.
+![Flow Diagram of VPC and EC2 Connectivity](flow-diagram)
 
 In AWS, networking plays a critical role in enabling secure, scalable, and cost-effective communication between your resources. This guide blends conceptual explanations with **step-by-step, console-based walkthroughs** placed directly in each section to ensure clarity from first glance.
 
@@ -20,7 +20,7 @@ In AWS, networking plays a critical role in enabling secure, scalable, and cost-
    * Add a rule:
 
      * **Type:** SSH (or your application port)
-     * **Source:** Custom → Enter the VPC’s CIDR (e.g., `10.0.0.0/16`) or the security group itself.
+     * **Source:** Custom → Enter the VPC’s CIDR (e.g., `10.0.0.0/16`) or the security group itself.
 3. **Connect:** Use the private IP to SSH or call your service:
 
    ```bash
@@ -41,8 +41,8 @@ In AWS, networking plays a critical role in enabling secure, scalable, and cost-
 
 1. **Open VPC Console** → **Peering Connections** → **Create peering connection**.
 2. **Name tag:** `VPC-A-to-VPC-B`.
-3. **Requester VPC:** Select **VPC-A** (CIDR `172.31.0.0/16`) .
-4. **Accepter VPC:** Choose **Another VPC in this account**, select **VPC-B** (CIDR `10.0.0.0/24`) .
+3. **Requester VPC:** Select **VPC-A** (CIDR `10.0.0.0/16`).
+4. **Accepter VPC:** Choose **Another VPC in this account**, select **VPC-B** (CIDR `10.1.0.0/16`).
 5. Click **Create peering connection**.
 6. Select the pending connection → **Actions** → **Accept request**.
 
@@ -54,11 +54,11 @@ In AWS, networking plays a critical role in enabling secure, scalable, and cost-
 2. **Add route in VPC-A’s table**:
 
    * **Edit routes** → **Add route**
-   * **Destination:** `10.0.0.0/24`
+   * **Destination:** `10.1.0.0/16`
    * **Target:** Select **Peering Connection**, pick the new ID `pcx-...` → **Save routes**.
 3. **Repeat for VPC-B**:
 
-   * Destination: `172.31.0.0/16`, Target: same peering ID.
+   * Destination: `10.0.0.0/16`, Target: same peering ID.
 4. **Verify Subnet Associations**: Ensure each table is linked to the correct subnet.
 
 ### C. Security Groups
@@ -108,7 +108,7 @@ ssh -i key.pem ec2-user@<EC2‑B‑private‑IP>
 
 1. **Account A → VPC → Peering Connections → Create**
 
-   * Requester: VPC-A, Accepter: Provide VPC ID + Account B ID.
+   * Requester: VPC-A (e.g., `10.0.0.0/16`), Accepter: Provide VPC ID + Account B ID (e.g., VPC with `10.1.0.0/16`).
 2. **Account B → Accept**.
 3. **Route Tables**: Add peer routes in each VPC.
 4. **SGs**: Allow peer CIDR inbound.
@@ -135,8 +135,8 @@ ssh -i key.pem ec2-user@<EC2‑B‑private‑IP>
 
    * Go to **VPC Console** → **Peering Connections** → **Create Peering Connection**.
    * Name: `A-to-B-crossregion-peering`
-   * **Requester VPC:** Choose VPC in Account A (e.g., `172.31.0.0/16`, `ap-south-1`).
-   * **Accepter VPC:** Enter **Account ID** and **VPC ID** of Account B (e.g., `10.0.0.0/24`, `ap-northeast-1`).
+   * **Requester VPC:** Choose VPC in Account A (e.g., `10.0.0.0/16`, `ap-south-1`).
+   * **Accepter VPC:** Enter **Account ID** and **VPC ID** of Account B (e.g., `10.2.0.0/16`, `ap-northeast-1`).
    * Enable **cross-region** checkbox.
 
 2. **Account B Accepts the Peering Request:**
@@ -175,6 +175,8 @@ So, if you're planning to connect **many VPCs across regions/accounts**, conside
 * Best suited when VPC peering isn’t possible or for hybrid setups.
 
 > **Tip:** Always avoid overlapping CIDRs to ensure successful peering.
+
+---
 
 ## 6. EC2s via Public IP (Any Mix)
 
