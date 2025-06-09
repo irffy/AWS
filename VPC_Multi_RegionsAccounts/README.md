@@ -1,7 +1,5 @@
 # Connecting EC2 Instances Across VPCs, Regions, and AWS Accounts
 
-![Flow Diagram of VPC and EC2 Connectivity](flow-diagram)
-
 In AWS, networking plays a critical role in enabling secure, scalable, and cost-effective communication between your resources. This guide blends conceptual explanations with **step-by-step, console-based walkthroughs** placed directly in each section to ensure clarity from first glance.
 
 In AWS, networking plays a critical role in enabling secure, scalable, and cost-effective communication between your resources. This guide blends conceptual explanations with **step-by-step, console-based walkthroughs** placed directly in each section to ensure clarity from first glance.
@@ -204,5 +202,3 @@ So, if you're planning to connect **many VPCs across regions/accounts**, conside
 | EC2s via Public IP                                | Any / Any                | Public Internet                          | Very Low         | Higher (egress) |
 
 ---
-
-With these **in-section, detailed steps**, newcomers can immediately find both the rationale and precise console actions needed for each scenario. Let me know if any section needs further expansion or visual aids!
