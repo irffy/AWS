@@ -1,7 +1,5 @@
 # Connecting EC2 Instances Across VPCs, Regions, and AWS Accounts
 
-![Flow Diagram of VPC and EC2 Connectivity](flow-diagram)
-
 In AWS, networking plays a critical role in enabling secure, scalable, and cost-effective communication between your resources. This guide blends conceptual explanations with **step-by-step, console-based walkthroughs** to provide a clear path for connecting EC2 instances in any scenario.
 
 ---
