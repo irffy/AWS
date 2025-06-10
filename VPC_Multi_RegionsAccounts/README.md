@@ -1,10 +1,21 @@
 # Connecting EC2 Instances Across VPCs, Regions, and AWS Accounts
 
+## Table of Contents
+
+* [1. EC2s in the Same VPC](#1-ec2s-in-the-same-vpc)
+* [2. EC2s in Different VPCs (Same Region, Same Account)](#2-ec2s-in-different-vpcs-same-region-same-account)
+* [3. EC2s in Different VPCs (Cross-Region, Same Account)](#3-ec2s-in-different-vpcs-cross-region-same-account)
+* [4. EC2s in Different VPCs (Same Region, Different Accounts)](#4-ec2s-in-different-vpcs-same-region-different-accounts)
+* [5. Exposing a Service Privately with AWS PrivateLink](#5-exposing-a-service-privately-with-aws-privatelink)
+* [6. EC2s in Different VPCs (Cross-Region & Cross-Account)](#6-ec2s-in-different-vpcs-cross-region--cross-account)
+* [7. Connecting EC2s via Public IP (Least Secure)](#7-connecting-ec2s-via-public-ip-least-secure)
+* [8. Summary Table](#8-summary-table)
+
 In AWS, networking plays a critical role in enabling secure, scalable, and cost-effective communication between your resources. This guide blends conceptual explanations with **step-by-step, console-based walkthroughs** to provide a clear path for connecting EC2 instances in any scenario.
 
 ---
 
-## 1. EC2s in the Same VPC
+## 1. EC2s in the Same VPC](#1-ec2s-in-the-same-vpc)
 
 **Concept:** Instances within the same Virtual Private Cloud (VPC) can communicate over AWS’s private network using their private IP addresses by default. This is the simplest and most common scenario.
 
@@ -25,12 +36,11 @@ In AWS, networking plays a critical role in enabling secure, scalable, and cost-
 
     # Example: SSHing to another instance
     ssh -i key.pem ec2-user@<Private-IP-of-other-EC2>
-    ```
 **Result:** Secure, zero-cost (within the same Availability Zone), low-latency communication entirely on the AWS backbone.
 
 ---
 
-## 2. EC2s in Different VPCs (Same Region, Same Account)
+## 2. EC2s in Different VPCs (Same Region, Same Account)](#2-ec2s-in-different-vpcs-same-region-same-account)
 
 **Concept:** **VPC Peering** creates a private, point-to-point connection between two VPCs, allowing them to communicate as if they were in the same network. Traffic uses private IPs and stays on the AWS global network.
 
@@ -75,7 +85,7 @@ ssh -i key.pem ec2-user@<EC2-B-private-IP>
 
 ---
 
-## 3. EC2s in Different VPCs (Cross-Region, Same Account)
+## 3. EC2s in Different VPCs (Cross-Region, Same Account)](#3-ec2s-in-different-vpcs-cross-region-same-account)
 
 **Concept:** The same VPC Peering mechanism can be used to connect VPCs across different AWS regions.
 
@@ -92,7 +102,7 @@ ssh -i key.pem ec2-user@<EC2-B-private-IP>
 
 ---
 
-## 4. EC2s in Different VPCs (Same Region, Different Accounts)
+## 4. EC2s in Different VPCs (Same Region, Different Accounts)](#4-ec2s-in-different-vpcs-same-region-different-accounts)
 
 **Concept:** For connecting a few VPCs, **Inter-Account VPC Peering** is sufficient. For connecting many VPCs at scale, **AWS Transit Gateway** is the modern, recommended approach.
 
@@ -121,7 +131,7 @@ A Transit Gateway (TGW) acts as a central cloud router. Instead of creating many
 
 ---
 
-## 5. Exposing a Service Privately with AWS PrivateLink
+## 5. Exposing a Service Privately with AWS PrivateLink](#5-exposing-a-service-privately-with-aws-privatelink)
 
 **Concept:** Instead of connecting entire networks, **AWS PrivateLink** allows you to expose a specific service (e.g., an application running on EC2 behind a Network Load Balancer) from one VPC to consumers in another. Traffic is one-way and never leaves the AWS network. This is fundamentally more secure for service-oriented communication.
 
@@ -138,7 +148,7 @@ A Transit Gateway (TGW) acts as a central cloud router. Instead of creating many
 
 ---
 
-## 6. EC2s in Different VPCs (Cross-Region & Cross-Account)
+## 6. EC2s in Different VPCs (Cross-Region & Cross-Account)](#6-ec2s-in-different-vpcs-cross-region--cross-account)
 
 **Concept:** Connecting networks across both account and region boundaries is a common enterprise requirement. The recommended approach for scalability and manageability is Transit Gateway Peering.
 
@@ -162,7 +172,7 @@ For a simple point-to-point connection, you can use standard VPC peering. The st
 
 ---
 
-## 7. Connecting EC2s via Public IP (Least Secure)
+## 7. Connecting EC2s via Public IP (Least Secure)](#7-connecting-ec2s-via-public-ip-least-secure)
 
 **Concept:** This method uses the public internet to connect instances. While simple to set up, it is the least secure and should be avoided for private communication.
 
@@ -176,7 +186,7 @@ For a simple point-to-point connection, you can use standard VPC peering. The st
 
 ---
 
-## 8. Summary Table
+## 8. Summary Table](#8-summary-table)
 
 | Scenario                                          | Method                                       | Setup Complexity | Cost Impact (Data Transfer)        | Key Use Case                                      |
 | ------------------------------------------------- | -------------------------------------------- | ---------------- | ---------------------------------- | ------------------------------------------------- |
