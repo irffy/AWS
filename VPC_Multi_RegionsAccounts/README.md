@@ -1,4 +1,3 @@
-```markdown
 # Connecting EC2 Instances Across VPCs, Regions, and AWS Accounts
 
 ![Flow Diagram of VPC and EC2 Connectivity](flow-diagram)
@@ -190,5 +189,3 @@ For a simple point-to-point connection, you can use standard VPC peering. The st
 | **Service-to-Service Connectivity (Any)**         | **AWS PrivateLink**                          | Medium           | Medium (per-GB + hourly endpoint)  | **Securely exposing one service to consumers.**   |
 | Different VPCs (Cross-Region & Cross-Account)     | TGW Peering (recommended) or VPC Peering   | High             | High (cross-region + TGW fees)     | Global enterprise networks.                       |
 | EC2s via Public IP                                | Public Internet                              | Very Low         | High (standard internet egress)    | **Not recommended for private traffic.**          |
-
-```
